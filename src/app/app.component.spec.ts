@@ -1,31 +1,28 @@
 import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { HttpService } from './http.service';
+import { from } from 'rxjs';
+
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
-  }));
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
+  let component: AppComponent;
+  let service: HttpService;
+  beforeEach(() => {
+    service = new HttpService(null);
+    component = new AppComponent(service);
   });
 
-  it(`should have as title 'twitter'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('twitter');
+  it('should set data property with the items returned from the server', () => {
+    spyOn(service, 'getTweet').and.callFake(() => {
+      return from([[1, 2, 3]]);
+    });
+
+    component.ngOnInit();
+
+    expect(component.data).toEqual([1, 2, 3]);
+
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('twitter app is running!');
-  });
+
+
 });
